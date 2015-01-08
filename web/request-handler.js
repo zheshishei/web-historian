@@ -28,7 +28,6 @@ exports.handleRequest = function (req, res) {
     })
     req.on('end', function() {
       var requestedUrl = querystring.parse(data).url;
-
       archive.isURLArchived(requestedUrl,function(exists) {
         if(exists) {
           web.sendResponse(res,302,"",{Location: path.join(archive.paths.archiveREST,requestedUrl)});

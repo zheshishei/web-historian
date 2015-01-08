@@ -34,7 +34,7 @@ exports.readListOfUrls = readListOfUrls = function(callback) {
       console.trace();
       callback(err,data);
     } else {
-      callback(err,data.split('\n'));
+      callback(err,data.trim().split('\n'));
     }
   });
 }
@@ -63,7 +63,7 @@ exports.addUrlToList = function(url,callback){
 };
 
 exports.isURLArchived = function(url, callback){
-  var fileName = path.join(paths.archivedSites, url);
+  var fileName = path.join(paths.archivedSites, (url || ''));
   fs.open(fileName, 'r', function(err) {
     if(err) {
       callback(false);
