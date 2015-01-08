@@ -12,7 +12,9 @@ var _ = require('underscore');
 exports.paths = paths = {
   'siteAssets' : path.join(__dirname, '../web/public'),
   'archivedSites' : path.join(__dirname, '../archives/sites'),
-  'list' : path.join(__dirname, '../archives/sites.txt')
+  'list' : path.join(__dirname, '../archives/sites.txt'),
+  'archiveREST' : 'archive',
+  'temp' : path.join(__dirname, '../archives/temp/')
 };
 
 // Used for stubbing paths for jasmine tests, do not modify
@@ -25,13 +27,39 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = readListOfUrls = function(callback) {
+  fs.readFile(paths.list, {encoding: 'utf8'}, function(err,data) {
+    if (err) {
+      console.log('error reading list of urls');
+      console.trace();
+      callback(err,data);
+    } else {
+      callback(err,data.split('\n'));
+    }
+  });
+}
+
+exports.isUrlInList = function(url,callback) {
+  readListOfUrls(function(err, list) {
+    if(err) {
+      callback(false)
+    } else {
+      var isInList = (list.indexOf(url) !== -1);
+      callback(isInList);
+    }
+  });
 };
 
-exports.isUrlInList = function(){
-};
-
-exports.addUrlToList = function(){
+exports.addUrlToList = function(url,callback){
+  fs.appendFile(paths.list, url + "\n", function(err) {
+    if(err){
+      console.log("ERROR APPENDING TO LIST FILE");
+      console.trace();
+    }
+    if(callback) {
+      callback(err);
+    }
+  })
 };
 
 exports.isURLArchived = function(url, callback){
